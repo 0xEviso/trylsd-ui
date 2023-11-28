@@ -13,7 +13,7 @@ module.exports = {
 ```
 */
 
-import { classNames } from '@/util/Helpers';
+import { classNames } from '@/lib/utils';
 import { Tab } from '@headlessui/react'
 import { useState } from 'react'
 
