@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
+import Header from '@/components/header/Header';
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -14,9 +16,23 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  console.log('inter.className', inter.className);
+
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html className="h-full bg-gray-100" lang="en">
+      <body className={`${inter.className} h-full`}>
+
+        <div className="min-h-full">
+          <Header />
+
+            <main className="-mt-32">
+
+              {children}
+
+            </main>
+        </div>
+
+      </body>
     </html>
   )
 }
