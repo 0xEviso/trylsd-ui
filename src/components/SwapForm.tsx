@@ -15,25 +15,32 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { useState, ChangeEvent } from "react"
+import { useState, ChangeEvent, WheelEvent } from "react"
+
+import { formatUnits, parseUnits } from 'viem'
 
 export default function SwapForm() {
   // Initialize the state variable
   const [ethAmountValue, setEthAmountValue] = useState('')
   const [trylsdAmountValue, setTrylsdAmountValue] = useState('')
 
+  const handleOnWheel = (event: WheelEvent<HTMLInputElement>) => {
+    const target = event.target as HTMLInputElement;
+    target.blur();
+  }
+
+
   // Function to update state based on input change
   const handleEthAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
-
-    const value = parseFloat(event.target.value)
-
-    if (value === 0) {
+    if (event.target.value == '0') {
       setEthAmountValue('0')
       setTrylsdAmountValue('0')
-    } else {
-      setEthAmountValue(value.toString())
-      setTrylsdAmountValue((value / 3).toString())
+      return
     }
+
+    const value = parseUnits(event.target.value, 18)
+    setEthAmountValue(formatUnits(value, 18))
+    setTrylsdAmountValue(formatUnits(value / BigInt(3), 18))
   }
 
   return (
@@ -58,7 +65,7 @@ export default function SwapForm() {
                 <CardContent className="space-y-2">
                   <div className="space-y-1">
                     <Label htmlFor="ethAmount">ETH amount sent</Label>
-                    <Input id="ethAmount" placeholder="0" type="number" value={ethAmountValue} onChange={handleEthAmountChange} />
+                    <Input id="ethAmount" placeholder="0" type="number" value={ethAmountValue} onChange={handleEthAmountChange} onWheel={handleOnWheel}/>
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="trylsdAmount">Estimated TryLSD amount received</Label>
