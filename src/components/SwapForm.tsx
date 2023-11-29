@@ -1,143 +1,102 @@
-/*
-This example requires some changes to your config:
-
-```
-// tailwind.config.js
-module.exports = {
-  // ...
-  plugins: [
-    // ...
-    require('@tailwindcss/forms'),
-  ],
-}
-```
-*/
-
-import { classNames } from '@/lib/utils';
-import { Tab } from '@headlessui/react'
-import { useState } from 'react'
-
-
-const tabs = [
-  { name: 'Deposit', href: '#', current: true },
-  { name: 'Withdraw', href: '#', current: false },
-]
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import { useState, ChangeEvent } from "react"
 
 export default function SwapForm() {
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  // Initialize the state variable
+  const [ethAmountValue, setEthAmountValue] = useState('')
+  const [trylsdAmountValue, setTrylsdAmountValue] = useState('')
 
-  console.log('selectedIndex', selectedIndex)
+  // Function to update state based on input change
+  const handleEthAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
+
+    const value = parseFloat(event.target.value)
+
+    if (value === 0) {
+      setEthAmountValue('0')
+      setTrylsdAmountValue('0')
+    } else {
+      setEthAmountValue(value.toString())
+      setTrylsdAmountValue((value / 3).toString())
+    }
+  }
 
   return (
-    <>
+    <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
 
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
 
-      <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-
-            <div>
-              <div className="sm:hidden">
-                <label htmlFor="tabs" className="sr-only">
-                  Select a tab
-                </label>
-                {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-                <select
-                  id="tabs"
-                  name="tabs"
-                  className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                  defaultValue={tabs.find((tab) => tab.current).name}
-                >
-                  {tabs.map((tab) => (
-                    <option key={tab.name}>{tab.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="hidden sm:block">
-                <label htmlFor="tabs" className="sr-only">
-                  Select a tab
-                </label>
-                {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-                <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-                  <Tab.List>
-                    {tabs.map((tab) => (
-                      <Tab key={tab.name} className={classNames(
-                        tab.current ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:text-gray-700',
-                        'rounded-md px-3 py-2 text-sm font-medium'
-                      )}>{tab.name}</Tab>
-                    ))}
-                  </Tab.List>
-                </Tab.Group>
-              </div>
-
-              <div className="hidden sm:block">
-                <nav className="flex space-x-4" aria-label="Tabs">
-                  {tabs.map((tab) => (
-                    <a
-                      key={tab.name}
-                      href={tab.href}
-                      className={classNames(
-                        tab.current ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:text-gray-700',
-                        'rounded-md px-3 py-2 text-sm font-medium'
-                      )}
-                      aria-current={tab.current ? 'page' : undefined}
-                    >
-                      {tab.name}
-                    </a>
-                  ))}
-                </nav>
-              </div>
-            </div>
-
-            <form className="space-y-6" action="#" method="POST">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                  You pay (ETH)
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                  You receive (TryLSD pool tokens)
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Swap
-                </button>
-              </div>
-            </form>
-
-          </div>
+          <Tabs defaultValue="deposit" className="w-[400px]">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="deposit">Deposit</TabsTrigger>
+              <TabsTrigger value="withdrawal">Withdrawal</TabsTrigger>
+            </TabsList>
+            <TabsContent value="deposit">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Deposit</CardTitle>
+                  <CardDescription>
+                    Deposit ETH to mint TryLSD Pool Tokens.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="ethAmount">ETH amount sent</Label>
+                    <Input id="ethAmount" placeholder="0" type="number" value={ethAmountValue} onChange={handleEthAmountChange} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="trylsdAmount">Estimated TryLSD amount received</Label>
+                    <Input id="trylsdAmount" placeholder="0" disabled type="number" value={trylsdAmountValue} />
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button>Send</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            <TabsContent value="withdrawal">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Withdrawal</CardTitle>
+                  <CardDescription>
+                    Withdraw ETH by burning TryLSD Pool Tokens.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="ethAmount">TryLSD amount sent</Label>
+                    <Input id="ethAmount" placeholder="0" type="number" value={ethAmountValue} onChange={handleEthAmountChange} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="trylsdAmount">Estimated ETH amount received</Label>
+                    <Input id="trylsdAmount" placeholder="0" disabled type="number" value={trylsdAmountValue} />
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button>Send</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
 
         </div>
       </div>
-    </>
+    </div>
   )
 }
