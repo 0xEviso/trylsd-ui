@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 
 import Header from '@/components/header/Header';
+import { WalletContextApp } from '@/components/WalletContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,23 +17,20 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  console.log('inter.className', inter.className);
-
   return (
-    <html className="h-full bg-gray-100" lang="en">
-      <body className={`${inter.className} h-full`}>
-
-        <div className="min-h-full">
-          <Header />
-
-            <main className="-mt-32">
-
-              {children}
-
-            </main>
-        </div>
-
-      </body>
-    </html>
+    <>
+      <html className="h-full bg-gray-100" lang="en">
+        <body className={`${inter.className} h-full`}>
+          <WalletContextApp>
+            <div className="min-h-full">
+              <Header />
+              <main className="-mt-32">
+                {children}
+              </main>
+            </div>
+          </WalletContextApp>
+        </body>
+      </html>
+    </>
   )
 }
