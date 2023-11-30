@@ -18,29 +18,60 @@ import {
 import { useState, ChangeEvent, WheelEvent } from "react"
 
 import { formatUnits, parseUnits } from 'viem'
+import { useContractRead } from 'wagmi'
+
+import { TryLSDGatewayABI } from '@/utils/abi/TryLSDGateway.abi'
+
+const trylsdGateway = '0x837a41023cf81234f89f956c94d676918b4791c1'
+const reth = '0xae78736Cd615f374D3085123A210448E74Fc6393'
+const rethWhale = '0x5fEC2f34D80ED82370F733043B6A536d7e9D7f8d'
 
 export default function SwapForm() {
+
   // Initialize the state variable
-  const [ethAmountValue, setEthAmountValue] = useState('')
-  const [trylsdAmountValue, setTrylsdAmountValue] = useState('')
+  const [ethAmount, setEthAmount] = useState('')
+  const [trylsdAmount, setTrylsdAmount] = useState('')
+  const [ethValue, setEthValue] = useState<bigint>(BigInt(0))
+  const [isSlippageActive, setIsSlippageActive] = useState(false)
 
   const handleOnWheel = (event: WheelEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
     target.blur();
   }
 
+  const { data, isError, isLoading } = useContractRead({
+    address: trylsdGateway,
+    abi: TryLSDGatewayABI,
+    functionName: 'calculatePoolShares',
+    args: [ethValue],
+    enabled: isSlippageActive, // prevents the first call when value is 0
+    watch: true,
+    onSuccess(data: any) {
+      setTrylsdAmount(formatUnits(data, 18))
+    },
+    onError(error: any) {
+      console.log('Error', error)
+    },
+  });
 
   // Function to update state based on input change
   const handleEthAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value == '0') {
-      setEthAmountValue('0')
-      setTrylsdAmountValue('0')
+    const value = parseUnits(event.target.value, 18)
+
+    if (value == BigInt(0)) {
+      // this is to prevent the trigger of the useContractRead hook when the value is 0
+      setIsSlippageActive(false)
+      setEthValue(BigInt(0))
+
+      setEthAmount(event.target.value)
+      setTrylsdAmount('')
       return
     }
 
-    const value = parseUnits(event.target.value, 18)
-    setEthAmountValue(formatUnits(value, 18))
-    setTrylsdAmountValue(formatUnits(value / BigInt(3), 18))
+    // this is to trigger the useContractRead hook when the value is not 0
+    setIsSlippageActive(true)
+    setEthValue(value)
+    setEthAmount(formatUnits(value, 18))
   }
 
   return (
@@ -65,11 +96,17 @@ export default function SwapForm() {
                 <CardContent className="space-y-2">
                   <div className="space-y-1">
                     <Label htmlFor="ethAmount">ETH amount sent</Label>
-                    <Input id="ethAmount" placeholder="0" type="number" value={ethAmountValue} onChange={handleEthAmountChange} onWheel={handleOnWheel}/>
+                    <Input
+                      id="ethAmount"
+                      placeholder="0"
+                      type="number"
+                      value={ethAmount}
+                      onChange={handleEthAmountChange}
+                      onWheel={handleOnWheel} />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="trylsdAmount">Estimated TryLSD amount received</Label>
-                    <Input id="trylsdAmount" placeholder="0" disabled type="number" value={trylsdAmountValue} />
+                    <Input id="trylsdAmount" placeholder="0" disabled type="number" value={trylsdAmount} />
                   </div>
                 </CardContent>
                 <CardFooter>
@@ -88,11 +125,11 @@ export default function SwapForm() {
                 <CardContent className="space-y-2">
                   <div className="space-y-1">
                     <Label htmlFor="ethAmount">TryLSD amount sent</Label>
-                    <Input id="ethAmount" placeholder="0" type="number" value={ethAmountValue} onChange={handleEthAmountChange} />
+                    <Input id="ethAmount" placeholder="0" type="number" value={ethAmount} onChange={handleEthAmountChange} />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="trylsdAmount">Estimated ETH amount received</Label>
-                    <Input id="trylsdAmount" placeholder="0" disabled type="number" value={trylsdAmountValue} />
+                    <Input id="trylsdAmount" placeholder="0" disabled type="number" value={trylsdAmount} />
                   </div>
                 </CardContent>
                 <CardFooter>
