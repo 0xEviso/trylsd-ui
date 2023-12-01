@@ -18,13 +18,11 @@ import {
 import { useState, ChangeEvent, WheelEvent } from "react"
 
 import { formatUnits, parseUnits } from 'viem'
-import { useContractRead } from 'wagmi'
+import { useContractRead, useContractWrite } from 'wagmi'
 
 import { TryLSDGatewayABI } from '@/utils/abi/TryLSDGateway.abi'
 
-const trylsdGateway = '0x837a41023cf81234f89f956c94d676918b4791c1'
-const reth = '0xae78736Cd615f374D3085123A210448E74Fc6393'
-const rethWhale = '0x5fEC2f34D80ED82370F733043B6A536d7e9D7f8d'
+const trylsdGateway = process.env.NEXT_PUBLIC_TRYLSDGATEWAY_ADDRESS
 
 export default function SwapForm() {
 
@@ -39,7 +37,8 @@ export default function SwapForm() {
     target.blur();
   }
 
-  const { data, isError, isLoading } = useContractRead({
+  // This is used to convert ETH amount to TryLSD amount
+  const { data: calculateData, isError, isLoading: calculateIsLoading } = useContractRead({
     address: trylsdGateway,
     abi: TryLSDGatewayABI,
     functionName: 'calculatePoolShares',
@@ -53,6 +52,22 @@ export default function SwapForm() {
       console.log('Error', error)
     },
   });
+
+  // This is used to send ETH and receive TryLSD pool tokens
+  const { data, isLoading, isSuccess, write } = useContractWrite({
+    address: trylsdGateway,
+    abi: TryLSDGatewayABI,
+    functionName: 'swapAndDeposit',
+    args: ['0x792bb625685c772928Ad57bDD304AB2124EE013A', BigInt(0)],
+    from: '0x792bb625685c772928Ad57bDD304AB2124EE013A',
+    value: ethValue,
+    onSuccess(data) {
+      console.log('Success', data)
+    },
+    onError(error) {
+      console.log('Error', error)
+    },
+  })
 
   // Function to update state based on input change
   const handleEthAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +125,7 @@ export default function SwapForm() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button>Send</Button>
+                  <Button onClick={() => write()}>Send</Button>
                 </CardFooter>
               </Card>
             </TabsContent>

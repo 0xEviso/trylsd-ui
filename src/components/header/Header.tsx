@@ -55,8 +55,8 @@ export default function Header() {
                     </div>
                   </div>
                   <div className="hidden md:block">
-                    <div className="ml-4 flex items-center md:ml-6">
-                      <ConnectButton />
+                    <div className="ml-4 flex items-center md:ml-6 text-base	">
+                      <ConnectButton accountStatus="address" showBalance={false} />
                     </div>
                   </div>
                   <div className="-mr-2 flex md:hidden">
@@ -95,7 +95,7 @@ export default function Header() {
             </Disclosure.Panel>
             <div className="border-t border-gray-700 pb-3 pt-4 md:hidden">
               <div className="flex items-center flex-row-reverse px-5">
-                <ConnectButton />
+                <ConnectButton accountStatus="address" showBalance={false} />
               </div>
             </div>
           </>
