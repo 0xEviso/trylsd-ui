@@ -17,8 +17,6 @@ const navigation = [
 export default function Header() {
   const [selectedIndex, setSelectedIndex] = useState(0)
 
-  console.log('selectedIndex', selectedIndex)
-
   return (
     <div className="bg-gray-800 pb-32">
       <Disclosure as="nav" className="bg-gray-800">
