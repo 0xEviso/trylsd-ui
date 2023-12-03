@@ -4,13 +4,13 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
-  arbitrum,
+  // arbitrum,
   goerli,
   mainnet,
-  optimism,
-  polygon,
-  base,
-  zora,
+  // optimism,
+  // polygon,
+  // base,
+  // zora,
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { defineChain } from 'viem';
@@ -35,11 +35,11 @@ const localhost = defineChain({
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    base,
-    zora,
+    // polygon,
+    // optimism,
+    // arbitrum,
+    // base,
+    // zora,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
     ...(process.env.NEXT_PUBLIC_ENABLE_LOCALHOST === 'true' ? [localhost] : []),
   ],
