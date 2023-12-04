@@ -22,9 +22,9 @@ export default function RootLayout({
       <html className="h-full bg-gray-100" lang="en">
         <body className={`${inter.className} h-full`}>
           <WalletContextApp>
-            <div className="min-h-full">
+            <div className="min-h-full bg-gray-900">
               <Header />
-              <main className="-mt-32">
+              <main className="-mt-32 bg-gray-900">
                 {children}
               </main>
             </div>

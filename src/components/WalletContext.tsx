@@ -1,7 +1,7 @@
 'use client'
 
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   // arbitrum,
@@ -64,7 +64,7 @@ export const WalletContextApp = ({children}: {
 }): ReactElement => {
 	return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
+      <RainbowKitProvider chains={chains} theme={darkTheme()}>
         {children}
       </RainbowKitProvider>
     </WagmiConfig>

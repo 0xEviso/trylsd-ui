@@ -24,7 +24,7 @@ const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 const trylsdGatewayAddress = getAddress(process.env.NEXT_PUBLIC_TRYLSDGATEWAY_ADDRESS || NULL_ADDRESS)
 const trylsdAddress = getAddress(process.env.NEXT_PUBLIC_TRYLSD_ADDRESS || NULL_ADDRESS)
 
-export default function SwapForm() {
+export default function DepositForm() {
   // Deposit eth number in wei + user friendly string in eth (1e18)
   const [ethValue, setEthValue] = useState<bigint>(BigInt(0))
   const [ethAmount, setEthAmount] = useState('')

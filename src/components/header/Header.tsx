@@ -10,8 +10,9 @@ import { classNames } from '@/lib/utils'
 import YieldNestLogo from '../../../public/yieldnest_logo.svg'
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'About', href: '#', current: false },
+  { name: 'Home', href: '/', current: true },
+  { name: 'Deposit', href: '/deposit', current: false },
+  { name: 'Withdraw', href: '/withdraw', current: false },
 ]
 
 export default function Header() {

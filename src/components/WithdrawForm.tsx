@@ -23,7 +23,7 @@ import { TryLSDGatewayABI } from '@/utils/abi/TryLSDGateway.abi'
 const trylsdGateway = getAddress(process.env.NEXT_PUBLIC_TRYLSDGATEWAY_ADDRESS || '')
 const trylsd = getAddress(process.env.NEXT_PUBLIC_TRYLSD_ADDRESS || '')
 
-export default function WithdrawalForm() {
+export default function WithdrawForm() {
   // Deposit eth number in wei + user friendly string in eth (1e18)
   const [depositEthValue, setDepositEthValue] = useState<bigint>(BigInt(0))
   const [depositEthAmount, setDepositEthAmount] = useState('')
@@ -47,7 +47,7 @@ export default function WithdrawalForm() {
   const [userBalanceTryLSDAmount, setUserBalanceTryLSDAmount] = useState('0')
   const [isSlippageCalculationTryLSDToEthEnabled, setIsSlippageCalculationTryLSDToEthEnabled] = useState(false)
   // Error handling
-  const [isError, setIsError] = useState(true)
+  const [isError, setIsError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   // checking if user is connected and fetch address
@@ -197,7 +197,7 @@ export default function WithdrawalForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Withdrawal</CardTitle>
+        <CardTitle>Withdraw</CardTitle>
         <CardDescription>
           Withdraw ETH by burning TryLSD Pool Tokens.
         </CardDescription>
