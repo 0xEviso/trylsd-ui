@@ -1,4 +1,4 @@
-import SwapForm from '@/components/SwapForm';
+import SwapForm from '@/components/SwapForm/SwapForm';
 
 export default function Home() {
   return (
