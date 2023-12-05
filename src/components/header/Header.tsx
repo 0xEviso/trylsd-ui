@@ -1,22 +1,30 @@
 "use client";
 
 import Image from 'next/image'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { classNames } from '@/lib/utils'
 import YieldNestLogo from '../../../public/yieldnest_logo.svg'
 
 const navigation = [
-  { name: 'Home', href: '/', current: true },
+  { name: 'Home', href: '/', current: false },
   { name: 'Deposit', href: '/deposit', current: false },
   { name: 'Withdraw', href: '/withdraw', current: false },
 ]
 
 export default function Header() {
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [currentPathname, setCurrentPathname] = useState('')
+
+  const pathname = usePathname()
+
+  useEffect(() => {
+    setCurrentPathname(pathname)
+  }, [pathname])
 
   return (
     <div className="bg-gray-800 pb-32">
@@ -36,19 +44,19 @@ export default function Header() {
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
                         {navigation.map((item) => (
-                          <a
+                          <Link
                             key={item.name}
                             href={item.href}
                             className={classNames(
-                              item.current
+                              (currentPathname == item.href)
                                 ? 'bg-gray-900 text-white'
                                 : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                               'rounded-md px-3 py-2 text-sm font-medium'
                             )}
-                            aria-current={item.current ? 'page' : undefined}
+                            aria-current={(currentPathname == item.href) ? 'page' : undefined}
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -79,13 +87,13 @@ export default function Header() {
                 {navigation.map((item) => (
                   <Disclosure.Button
                     key={item.name}
-                    as="a"
+                    as={Link}
                     href={item.href}
                     className={classNames(
-                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      (currentPathname == item.href) ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                       'block rounded-md px-3 py-2 text-base font-medium'
                     )}
-                    aria-current={item.current ? 'page' : undefined}
+                    aria-current={(currentPathname == item.href) ? 'page' : undefined}
                   >
                     {item.name}
                   </Disclosure.Button>

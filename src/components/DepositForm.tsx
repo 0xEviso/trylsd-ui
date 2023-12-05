@@ -71,7 +71,8 @@ export default function DepositForm() {
     onSuccess(data) {
       console.log('useBalance ETH Success', data)
       setAccountBalanceEthValue(data.value)
-      setAccountBalanceEthAmount(data.formatted)
+      // FYI: total of the exponentials should be 18
+      setAccountBalanceEthAmount(formatUnits(data.value/BigInt(10 ** 14), 4))
     },
     onError(error) {
       console.log('useBalance ETH Error', error)
@@ -88,7 +89,8 @@ export default function DepositForm() {
       onSuccess(data) {
         console.log('useBalance TryLSD Success', data)
         setAccountBalanceTryLSDValue(data.value)
-        setAccountBalanceTryLSDAmount(data.formatted)
+        // FYI: total of the exponentials should be 18
+        setAccountBalanceTryLSDAmount(formatUnits(data.value/BigInt(10 ** 14), 4))
       },
       onError(error) {
         console.log('useBalance TryLSD Error', error)
@@ -177,7 +179,7 @@ export default function DepositForm() {
     // hide error message if any
     setIsError(false)
 
-    updateDepositEth(accountBalanceEthValue, accountBalanceEthAmount)
+    updateDepositEth(accountBalanceEthValue, formatUnits(accountBalanceEthValue, 18))
   }
 
   const handleDeposit = () => {
