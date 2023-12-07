@@ -72,7 +72,7 @@ export default function DepositForm() {
       console.log('useBalance ETH Success', data)
       setAccountBalanceEthValue(data.value)
       // FYI: total of the exponentials should be 18
-      setAccountBalanceEthAmount(formatUnits(data.value/BigInt(10 ** 14), 4))
+      setAccountBalanceEthAmount(formatUnits(data.value / BigInt(10 ** 14), 4))
     },
     onError(error) {
       console.log('useBalance ETH Error', error)
@@ -81,23 +81,23 @@ export default function DepositForm() {
     },
   })
 
-    // fetching connected user TryLSD balance
-    useBalance({
-      watch: true, // to refresh user balance automatically
-      address: accountAddress,
-      token: trylsdAddress,
-      onSuccess(data) {
-        console.log('useBalance TryLSD Success', data)
-        setAccountBalanceTryLSDValue(data.value)
-        // FYI: total of the exponentials should be 18
-        setAccountBalanceTryLSDAmount(formatUnits(data.value/BigInt(10 ** 14), 4))
-      },
-      onError(error) {
-        console.log('useBalance TryLSD Error', error)
-        setIsError(true)
-        setErrorMessage(error.message)
-      },
-    })
+  // fetching connected user TryLSD balance
+  useBalance({
+    watch: true, // to refresh user balance automatically
+    address: accountAddress,
+    token: trylsdAddress,
+    onSuccess(data) {
+      console.log('useBalance TryLSD Success', data)
+      setAccountBalanceTryLSDValue(data.value)
+      // FYI: total of the exponentials should be 18
+      setAccountBalanceTryLSDAmount(formatUnits(data.value / BigInt(10 ** 14), 4))
+    },
+    onError(error) {
+      console.log('useBalance TryLSD Error', error)
+      setIsError(true)
+      setErrorMessage(error.message)
+    },
+  })
 
   // disable input number increase/decrease on scroll
   const handleOnWheel = (event: WheelEvent<HTMLInputElement>) => {
@@ -186,7 +186,7 @@ export default function DepositForm() {
     // hide error message if any
     setIsError(false)
 
-    const minAmount:bigint = trylsdValue / BigInt(1000) * BigInt(999)
+    const minAmount: bigint = trylsdValue / BigInt(1000) * BigInt(999)
     depositWrite({
       args: [getAddress(accountAddress || ''), minAmount],
     })
@@ -211,7 +211,7 @@ export default function DepositForm() {
               value={ethAmount}
               onChange={handleDepositEthAmountChange}
               onWheel={handleOnWheel} />
-              <div>ETH</div>
+            <div>ETH</div>
           </div>
         </div>
 
@@ -269,7 +269,7 @@ export default function DepositForm() {
             onClick={handleDeposit}
             // The button will only be enable if eth value is non 0 and wallet is connected
             disabled={!(ethValue && accountIsConnected)}>
-              Send
+            Send
           </Button>
         )}
       </CardFooter>

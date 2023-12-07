@@ -59,14 +59,14 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
-export const WalletContextApp = ({children}: {
-	children: ReactElement,
+export const WalletContextApp = ({ children }: {
+  children: ReactElement,
 }): ReactElement => {
-	return (
+  return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains} theme={darkTheme()}>
         {children}
       </RainbowKitProvider>
     </WagmiConfig>
-	);
+  );
 };

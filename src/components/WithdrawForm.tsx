@@ -188,7 +188,7 @@ export default function WithdrawForm() {
     // hide error message if any
     setIsError(false)
 
-    const minAmount:bigint = depositTrylsdValue / BigInt(1000) * BigInt(999)
+    const minAmount: bigint = depositTrylsdValue / BigInt(1000) * BigInt(999)
     depositWrite({
       args: [getAddress(accountAddress || ''), minAmount],
     })
@@ -213,7 +213,7 @@ export default function WithdrawForm() {
               value={depositEthAmount}
               onChange={handleDepositEthAmountChange}
               onWheel={handleOnWheel} />
-              <div>ETH</div>
+            <div>ETH</div>
           </div>
         </div>
 
@@ -262,7 +262,7 @@ export default function WithdrawForm() {
             onClick={handleDeposit}
             // The button will only be enable if eth value is non 0 and wallet is connected
             disabled={!(depositEthValue && accountIsConnected)}>
-              Send
+            Send
           </Button>
         )}
       </CardFooter>

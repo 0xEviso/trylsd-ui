@@ -24,7 +24,7 @@ export default function Deposit() {
             <DepositForm />
           </div>
         </div>
-
+g
         <div className="px-6 sm:mx-auto sm:w-full sm:max-w-[480px] py-12 lg:py-0">
           <div className="flex justify-start">
             <span className="pr-3 pb-6 text-xl font-semibold leading-6">How it works</span>
