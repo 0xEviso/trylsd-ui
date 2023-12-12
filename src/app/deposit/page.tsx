@@ -1,11 +1,10 @@
+import Image from 'next/image'
 
 import DepositForm from '@/components/DepositForm'
-import Image from 'next/image'
 import StakingList from '@/components/StakingList'
 import VaultInfo from '@/components/VaultInfo'
-import { Separator } from "@/components/ui/separator"
 
-import TryLSDGatewayExplanation from '../../../public/trylsdgateway_explanation.png'
+import TryLSDGatewayExplanation from '@/../public/trylsdgateway_explanation.png'
 
 export default function Deposit() {
   return (

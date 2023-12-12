@@ -37,7 +37,7 @@ export default function StakingList() {
   return (
     <div className="bg-gray-900">
       <div className="mx-auto max-w-7xl">
-        <div className="bg-gray-900 py-10">
+        <div className="bg-gray-900 pb-10">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="mt-8 flow-root">
               <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

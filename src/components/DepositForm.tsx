@@ -23,6 +23,7 @@ import { TryLSDGatewayABI } from '@/utils/abi/TryLSDGateway.abi'
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 const trylsdGatewayAddress = getAddress(process.env.NEXT_PUBLIC_TRYLSDGATEWAY_ADDRESS || NULL_ADDRESS)
 const trylsdAddress = getAddress(process.env.NEXT_PUBLIC_TRYLSD_ADDRESS || NULL_ADDRESS)
+const MAX_SEND = parseUnits('1000', 18)
 
 export default function DepositForm() {
   // Deposit eth number in wei + user friendly string in eth (1e18)
@@ -39,7 +40,7 @@ export default function DepositForm() {
   const [accountBalanceEthAmount, setAccountBalanceEthAmount] = useState('0')
   // connected wallet TryLSD balances
   const [accountBalanceTryLSDValue, setAccountBalanceTryLSDValue] = useState<bigint>(BigInt(0))
-  const [accountBalanceTryLSDAmount, setAccountBalanceTryLSDAmount] = useState('0')
+  const [accountBalanceTrylsdAmount, setAccountBalanceTrylsdAmount] = useState('0')
   // eth to trylsd estimation
   const [isSlippageCalculationEnabled, setIsSlippageCalculationEnabled] = useState(false)
   // Error handling
@@ -89,7 +90,7 @@ export default function DepositForm() {
     onSuccess(data) {
       setAccountBalanceTryLSDValue(data.value)
       // FYI: total of the exponentials should be 18
-      setAccountBalanceTryLSDAmount(formatUnits(data.value / BigInt(10 ** 14), 4))
+      setAccountBalanceTrylsdAmount(formatUnits(data.value / BigInt(10 ** 14), 4))
     },
     onError(error) {
       console.error('useBalance TryLSD Error', error)
@@ -125,8 +126,8 @@ export default function DepositForm() {
 
   // This is used to send ETH and receive TryLSD pool tokens
   const {
-    isLoading: depositIsLoading,
-    write: depositWrite
+    isLoading: transactionIsLoading,
+    write: transactionWrite
   } = useContractWrite({
     address: trylsdGatewayAddress,
     abi: TryLSDGatewayABI,
@@ -144,7 +145,7 @@ export default function DepositForm() {
     },
   })
 
-  const updateDepositEth = (value: bigint, amount: string) => {
+  const updateReceive = (value: bigint, amount: string) => {
     if (value == BigInt(0)) {
       // this is to prevent the trigger of the useContractRead hook when the value is 0
       setIsSlippageCalculationEnabled(false)
@@ -158,42 +159,49 @@ export default function DepositForm() {
     }
     // this is to trigger the useContractRead hook when the value is not 0
     setIsSlippageCalculationEnabled(true)
+    // we set a max amount to be sent to avoid errors from the calculation contract
+    if (value > MAX_SEND) {
+      // value: number
+      setEthValue(MAX_SEND)
+      // amount: string
+      setEthAmount(formatUnits(MAX_SEND, 18))
+      return
+    }
     // value: number
     setEthValue(value)
     // amount: string
     setEthAmount(amount)
-    // setEthAmount(formatUnits(value, 18))
   }
 
   // Function to update state based on input change
-  const handleDepositEthAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSendAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     // hide error message if any
     setIsError(false)
     // hide success message if any
     setIsSuccessful(false)
 
     const value = parseUnits(event.target.value, 18)
-    updateDepositEth(value, event.target.value)
+    updateReceive(value, event.target.value)
   }
 
-  const handleDepositMax = () => {
+  const handleSendMax = () => {
     // hide error message if any
     setIsError(false)
     // hide success message if any
     setIsSuccessful(false)
-
-    updateDepositEth(accountBalanceEthValue, formatUnits(accountBalanceEthValue, 18))
+    // will update the receive input box
+    updateReceive(accountBalanceEthValue, formatUnits(accountBalanceEthValue, 18))
   }
 
-  const handleDeposit = () => {
+  const handleSend = () => {
     // hide error message if any
     setIsError(false)
     // hide success message if any
     setIsSuccessful(false)
 
     const minAmount: bigint = trylsdValue / BigInt(1000) * BigInt(999)
-    depositWrite({
-      args: [getAddress(accountAddress || ''), minAmount],
+    transactionWrite({
+      args: [getAddress(accountAddress || NULL_ADDRESS), minAmount],
     })
   }
 
@@ -213,8 +221,9 @@ export default function DepositForm() {
               id="ethAmount"
               placeholder="0"
               type="number"
+              max="1000"
               value={ethAmount}
-              onChange={handleDepositEthAmountChange}
+              onChange={handleSendAmountChange}
               onWheel={handleOnWheel} />
             <div>ETH</div>
           </div>
@@ -223,7 +232,7 @@ export default function DepositForm() {
         {accountIsConnected ? (
           <div className="flex items-center flex-row-reverse space-x-2 space-y-1">
             <div className="ml-2">
-              <Button variant="outline" onClick={handleDepositMax}>Max</Button>
+              <Button variant="outline" onClick={handleSendMax}>Max</Button>
             </div>
             <div className="space-y-1">
               {accountBalanceEthAmount}
@@ -238,14 +247,14 @@ export default function DepositForm() {
           <Label htmlFor="trylsdAmount">Pool tokens received</Label>
           <div className="flex items-center space-x-2 space-y-1">
             <Input id="trylsdAmount" placeholder="0" disabled type="number" value={trylsdAmount} />
-            <div>TRYLSD</div>
+            <div>TryLSD</div>
           </div>
         </div>
 
         {accountIsConnected ? (
           <div className="flex items-center flex-row-reverse space-x-2 space-y-1">
             <div className="space-y-1 mt-1 ml-1">
-              {accountBalanceTryLSDAmount}
+              {accountBalanceTrylsdAmount}
             </div>
             <div className="space-y-1">Balance:</div>
           </div>
@@ -276,17 +285,17 @@ export default function DepositForm() {
         ) : null}
       </CardContent>
       <CardFooter>
-        {depositIsLoading ? (
+        {transactionIsLoading ? (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Please confirm in your wallet
           </Button>
         ) : (
           <Button
-            onClick={handleDeposit}
+            onClick={handleSend}
             // The button will only be enable if eth value is non 0 and wallet is connected
             disabled={!(ethValue && accountIsConnected)}>
-            Send
+            Deposit
           </Button>
         )}
       </CardFooter>
