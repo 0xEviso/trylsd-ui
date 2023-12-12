@@ -45,19 +45,19 @@ export default function DepositForm() {
   // Error handling
   const [isError, setIsError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  // Success message
+  const [isSuccesful, setIsSuccessful] = useState(false)
 
   // checking if user is connected and fetch address
   useAccount({
     // how to update address on account change in MM
     onConnect({ address, connector, isReconnected }) {
-      console.log('useAccount Connected', { address, connector, isReconnected })
       setAccountIsConnected(true)
       if (address) {
         setAccountAddress(address)
       }
     },
     onDisconnect() {
-      console.log('useAccount Disconnected')
       setAccountBalanceEthValue(BigInt(0))
       setAccountBalanceEthAmount('0')
       setAccountIsConnected(false)
@@ -70,13 +70,12 @@ export default function DepositForm() {
     watch: true, // to refresh user balance automatically
     address: accountAddress,
     onSuccess(data) {
-      console.log('useBalance ETH Success', data)
       setAccountBalanceEthValue(data.value)
       // FYI: total of the exponentials should be 18
       setAccountBalanceEthAmount(formatUnits(data.value / BigInt(10 ** 14), 4))
     },
     onError(error) {
-      console.log('useBalance ETH Error', error)
+      console.error('useBalance ETH Error', error)
       setIsError(true)
       setErrorMessage(error.message)
     },
@@ -88,13 +87,12 @@ export default function DepositForm() {
     address: accountAddress,
     token: trylsdAddress,
     onSuccess(data) {
-      console.log('useBalance TryLSD Success', data)
       setAccountBalanceTryLSDValue(data.value)
       // FYI: total of the exponentials should be 18
       setAccountBalanceTryLSDAmount(formatUnits(data.value / BigInt(10 ** 14), 4))
     },
     onError(error) {
-      console.log('useBalance TryLSD Error', error)
+      console.error('useBalance TryLSD Error', error)
       setIsError(true)
       setErrorMessage(error.message)
     },
@@ -115,12 +113,11 @@ export default function DepositForm() {
     enabled: isSlippageCalculationEnabled, // prevents the first call when value is 0
     watch: true,
     onSuccess(data) {
-      console.log('calculatePoolShares Success', data)
       setTrylsdValue(data)
       setTrylsdAmount(formatUnits(data, 18))
     },
     onError(error) {
-      console.log('calculatePoolShares Error', error)
+      console.error('calculatePoolShares Error', error)
       setIsError(true)
       setErrorMessage(error.message)
     },
@@ -137,10 +134,11 @@ export default function DepositForm() {
     value: ethValue,
     account: accountAddress,
     onSuccess(data) {
-      console.log('swapAndDeposit Success', data)
+      // success!
+      setIsSuccessful(true)
     },
     onError(error: any) {
-      console.log('swapAndDeposit Error', error)
+      console.error('swapAndDeposit Error', error)
       setIsError(true)
       setErrorMessage(error.shortMessage)
     },
@@ -171,6 +169,8 @@ export default function DepositForm() {
   const handleDepositEthAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     // hide error message if any
     setIsError(false)
+    // hide success message if any
+    setIsSuccessful(false)
 
     const value = parseUnits(event.target.value, 18)
     updateDepositEth(value, event.target.value)
@@ -179,6 +179,8 @@ export default function DepositForm() {
   const handleDepositMax = () => {
     // hide error message if any
     setIsError(false)
+    // hide success message if any
+    setIsSuccessful(false)
 
     updateDepositEth(accountBalanceEthValue, formatUnits(accountBalanceEthValue, 18))
   }
@@ -186,6 +188,8 @@ export default function DepositForm() {
   const handleDeposit = () => {
     // hide error message if any
     setIsError(false)
+    // hide success message if any
+    setIsSuccessful(false)
 
     const minAmount: bigint = trylsdValue / BigInt(1000) * BigInt(999)
     depositWrite({
@@ -254,6 +258,18 @@ export default function DepositForm() {
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>
                 {errorMessage}
+              </AlertDescription>
+            </Alert>
+          </div>
+        ) : null}
+
+        {isSuccesful ? (
+          <div className="space-y-1">
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Success</AlertTitle>
+              <AlertDescription>
+                The deposit has been successful
               </AlertDescription>
             </Alert>
           </div>

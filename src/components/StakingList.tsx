@@ -1,6 +1,6 @@
 const vaults = [
   {
-    name: 'Native Staking',
+    name: 'Curve Staking',
     difficulty: 'Easy',
     risk: 'Low',
     reward: 'Low',
@@ -17,7 +17,7 @@ const vaults = [
   },
   {
     name: 'Concentrator',
-    difficulty: 'High',
+    difficulty: 'Hard',
     risk: 'Medium',
     reward: 'High',
     autocomp: 'Yes',
@@ -25,7 +25,7 @@ const vaults = [
   },
   {
     name: 'Beefy',
-    difficulty: 'Low',
+    difficulty: 'Easy',
     risk: 'Medium',
     reward: 'High',
     autocomp: 'Yes',
