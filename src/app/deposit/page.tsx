@@ -2,6 +2,7 @@
 import DepositForm from '@/components/DepositForm'
 import Image from 'next/image'
 import StakingList from '@/components/StakingList'
+import VaultInfo from '@/components/VaultInfo'
 import { Separator } from "@/components/ui/separator"
 
 import TryLSDGatewayExplanation from '../../../public/trylsdgateway_explanation.png'
@@ -9,6 +10,8 @@ import TryLSDGatewayExplanation from '../../../public/trylsdgateway_explanation.
 export default function Deposit() {
   return (
     <>
+      <VaultInfo />
+
       <div className="relative pt-6 px-12">
         <div className="flex justify-start">
           <span className="pr-3 pb-6 text-xl font-semibold leading-6">Step 1: Swap and Deposit to TryLSD AMM Pool</span>

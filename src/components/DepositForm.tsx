@@ -48,6 +48,7 @@ export default function DepositForm() {
 
   // checking if user is connected and fetch address
   useAccount({
+    // how to update address on account change in MM
     onConnect({ address, connector, isReconnected }) {
       console.log('useAccount Connected', { address, connector, isReconnected })
       setAccountIsConnected(true)
