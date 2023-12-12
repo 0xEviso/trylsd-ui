@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 
 import Header from '@/components/header/Header';
+import Footer from '@/components/Footer';
 import { WalletContextApp } from '@/components/WalletContext';
 
 const inter = Inter({ subsets: ['latin'] })
@@ -27,6 +28,7 @@ export default function RootLayout({
               <main className="-mt-32 bg-gray-900">
                 {children}
               </main>
+              <Footer />
             </div>
           </WalletContextApp>
         </body>

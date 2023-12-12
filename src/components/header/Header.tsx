@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { classNames } from '@/lib/utils'
-import YieldNestLogo from '../../../public/yieldnest_logo.svg'
+import ynIcon from '@/../public/yn-icon.svg'
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
@@ -35,10 +35,9 @@ export default function Header() {
               <div className="flex h-16 items-center justify-between px-4 sm:px-0">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <Image
-                      className="h-8 w-32"
-                      alt="YieldNest logo"
-                      src={YieldNestLogo} />
+                    <Link href='/'>
+                      <Image alt='logo' className='h-8 w-8' src={ynIcon} />
+                    </Link>
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">
