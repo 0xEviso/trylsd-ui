@@ -64,6 +64,9 @@ export default function Header() {
                     <ConnectButton accountStatus="address" showBalance={false} />
                   </div>
                 </div>
+                <div className="flex items-center flex-row-reverse px-5 md:hidden">
+                  <ConnectButton accountStatus="address" showBalance={false} />
+                </div>
                 <div className="-mr-2 flex md:hidden">
                   {/* Mobile menu button */}
                   <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -97,11 +100,6 @@ export default function Header() {
                 ))}
               </div>
             </Disclosure.Panel>
-            <div className="border-t border-gray-700 pb-3 pt-4 md:hidden">
-              <div className="flex items-center flex-row-reverse px-5">
-                <ConnectButton accountStatus="address" showBalance={false} />
-              </div>
-            </div>
           </>
         )}
       </Disclosure>

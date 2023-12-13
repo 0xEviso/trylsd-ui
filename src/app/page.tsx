@@ -28,7 +28,7 @@ const features = [
 export default function Home() {
   return (
     <>
-      <div className="mx-auto max-w-2xl py-30 sm:py-35 lg:py-40">
+      <div className="mx-auto max-w-2xl py-32 sm:py-36 lg:py-40">
         {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
             Announcing our next round of funding.{' '}
@@ -43,7 +43,7 @@ export default function Home() {
             Maximize your yield on ETH
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-300">
-            YieldNest TryLSD pool allows you to generate up to 8% APY on your
+            YieldNest TryLSD pool allows you to generate up to 8% APY on your ETH
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link

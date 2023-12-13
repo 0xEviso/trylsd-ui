@@ -54,16 +54,16 @@ export default function VaultInfo() {
   return (
     <>
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-px bg-white/5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid text-center gap-px bg-white/5 grid-cols-2 lg:grid-cols-4">
           <div className="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
             <p className="text-sm font-medium leading-6 text-gray-400">Pool Name</p>
-            <p className="mt-2 flex items-baseline gap-x-2">
+            <p className="mt-2 items-baseline gap-x-2">
               <span className="text-4xl font-semibold text-white">TryLSD</span>
             </p>
           </div>
           <div className="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
             <p className="text-sm font-medium leading-6 text-gray-400">Underlying Assets</p>
-            <p className="mt-2 flex items-baseline gap-x-2">
+            <p className="mt-2 flex justify-center items-baseline gap-x-2">
               <Image className="h-8 w-8" alt="Wrapped Staked Ether icon" src={wstEthIcon} />
               <Image className="h-8 w-8" alt="Rocket Pool Ether icon" src={rEthIcon} />
               <Image className="h-8 w-8" alt="Staked Frax Ether icon" src={sfrxEthIcon} />
@@ -71,22 +71,20 @@ export default function VaultInfo() {
           </div>
           <div className="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
             <p className="text-sm font-medium leading-6 text-gray-400">Total Value Locked</p>
-            <p className="mt-2 flex items-baseline gap-x-2">
-              <span className="text-4xl font-semibold tracking-tight text-white">
-                <NumericFormat
-                  className="bg-gray-900"
-                  type="text"
-                  value={poolTVL/1000000}
-                  decimalScale={2}
-                  prefix={'$'}
-                  suffix={'M'}
-                />
-              </span>
-            </p>
+            <div className="px-auto mt-2 items-baseline gap-x-2">
+              <NumericFormat
+                className="text-4xl font-semibold tracking-tight text-white bg-gray-900 w-36"
+                type="text"
+                value={poolTVL/1000000}
+                decimalScale={2}
+                prefix={'$'}
+                suffix={'M'}
+              />
+            </div>
           </div>
           <div className="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
             <p className="text-sm font-medium leading-6 text-gray-400">Estimated APY</p>
-            <p className="mt-2 flex items-baseline gap-x-2">
+            <p className="mt-2 items-baseline gap-x-2">
               <span className="text-4xl font-semibold tracking-tight text-white">
                 {estimatedAPY.toFixed(2)}%
               </span>
