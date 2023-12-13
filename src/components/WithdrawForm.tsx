@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { useState, ChangeEvent, WheelEvent } from "react"
 import { formatUnits, parseUnits, getAddress } from 'viem'
-import { useAccount, useContractRead, useContractWrite, useBalance } from 'wagmi'
+import { useAccount, useContractRead, useContractWrite, useBalance, erc20ABI } from 'wagmi'
 
 import { TryLSDGatewayABI } from '@/utils/abi/TryLSDGateway.abi'
 
@@ -24,6 +24,14 @@ const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 const trylsdGatewayAddress = getAddress(process.env.NEXT_PUBLIC_TRYLSDGATEWAY_ADDRESS || NULL_ADDRESS)
 const trylsdAddress = getAddress(process.env.NEXT_PUBLIC_TRYLSD_ADDRESS || NULL_ADDRESS)
 const MAX_SEND = parseUnits('1000', 18)
+
+enum SendBtnStatus {
+  DISABLED = 'DISABLED',
+  OK = 'OK',
+  ALLOWANCE = 'ALLOWANCE',
+  WAITING_USER = 'WAITING_USER',
+  WAITING_TX = 'WAITING_TX',
+}
 
 export default function WithdrawForm() {
   // Withdraw eth number in wei + user friendly string in eth (1e18)
@@ -41,6 +49,8 @@ export default function WithdrawForm() {
   // connected wallet TryLSD balances
   const [accountBalanceTryLSDValue, setAccountBalanceTryLSDValue] = useState<bigint>(BigInt(0))
   const [accountBalanceTrylsdAmount, setAccountBalanceTrylsdAmount] = useState('0')
+  // trylsd token to gateway allowance
+  const [trylsdAllowance, setTrylsdAllowance] = useState<bigint>(BigInt(0))
   // eth to trylsd estimation
   const [isSlippageCalculationEnabled, setIsSlippageCalculationEnabled] = useState(false)
   // Error handling
@@ -48,6 +58,10 @@ export default function WithdrawForm() {
   const [errorMessage, setErrorMessage] = useState('')
   // Success message
   const [isSuccesful, setIsSuccessful] = useState(false)
+  // Send button status
+  const [sendBtnStatus, setSendBtnStatus] = useState<keyof typeof SendBtnStatus>(SendBtnStatus.DISABLED);
+  // transaction pending
+  const [txIsPending, setTxIsPending] = useState(false)
 
   // checking if user is connected and fetch address
   useAccount({
@@ -99,6 +113,22 @@ export default function WithdrawForm() {
     },
   })
 
+  // Fetching the allowance of TryLSD token to the Gateway contract
+  useContractRead({
+    address: trylsdAddress,
+    abi: erc20ABI,
+    functionName: 'allowance',
+    args: [accountAddress, trylsdGatewayAddress],
+    onSuccess(data) {
+      setTrylsdAllowance(data)
+    },
+    onError(error) {
+      console.error('allowance Error', error)
+      setIsError(true)
+      setErrorMessage(error.message)
+    },
+  });
+
   // disable input number increase/decrease on scroll
   const handleOnWheel = (event: WheelEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
@@ -126,13 +156,11 @@ export default function WithdrawForm() {
 
   // This is used to send TryLSD and receive ETH
   const {
-    isLoading: transactionIsLoading,
-    write: transactionWrite
+    write: sendTokenWrite
   } = useContractWrite({
     address: trylsdGatewayAddress,
     abi: TryLSDGatewayABI,
     functionName: 'withdrawAndSwap',
-    value: trylsdValue,
     account: accountAddress,
     onSuccess(data) {
       // success!
@@ -142,6 +170,31 @@ export default function WithdrawForm() {
       console.error('withdrawAndSwap Error', error)
       setIsError(true)
       setErrorMessage(error.shortMessage)
+    },
+    onSettled() {
+      setTxIsPending(false)
+    },
+  })
+
+  // increase allowance of TryLSD token to the Gateway contract
+  const {
+    write: allowanceWrite
+  } = useContractWrite({
+    address: trylsdAddress,
+    abi: erc20ABI,
+    functionName: 'approve',
+    account: accountAddress,
+    onSuccess(data) {
+      // success!
+      setIsSuccessful(true)
+    },
+    onError(error: any) {
+      console.error('approve Error', error)
+      setIsError(true)
+      setErrorMessage(error.shortMessage)
+    },
+    onSettled() {
+      setTxIsPending(false)
     },
   })
 
@@ -201,8 +254,14 @@ export default function WithdrawForm() {
     setIsSuccessful(false)
     // TODO: approve tokens before sending
     const minValue: bigint = ethValue / BigInt(1000) * BigInt(999)
-    transactionWrite({
-      args: [getAddress(accountAddress || NULL_ADDRESS), trylsdValue, minValue],
+    setTxIsPending(true)
+    if (trylsdAllowance < trylsdValue) {
+      return allowanceWrite({
+        args: [trylsdGatewayAddress, trylsdValue],
+      })
+    }
+    sendTokenWrite({
+      args: [accountAddress, trylsdValue, minValue],
     })
   }
 
@@ -216,7 +275,7 @@ export default function WithdrawForm() {
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="space-y-1">
-          <Label htmlFor="trylsdAmount">Amount sent</Label>
+          <Label htmlFor="trylsdAmount">Pool tokens sent</Label>
           <div className="flex items-center space-x-2 space-y-1">
             <Input
               id="trylsdAmount"
@@ -244,7 +303,7 @@ export default function WithdrawForm() {
         <Separator className="my-4" />
 
         <div className="space-y-1">
-          <Label htmlFor="ethAmount">Pool tokens received</Label>
+          <Label htmlFor="ethAmount">ETH received</Label>
           <div className="flex items-center space-x-2 space-y-1">
             <Input id="ethAmount" placeholder="0" disabled type="number" value={ethAmount} />
             <div>ETH</div>
@@ -285,7 +344,7 @@ export default function WithdrawForm() {
         ) : null}
       </CardContent>
       <CardFooter>
-        {transactionIsLoading ? (
+        {txIsPending ? (
           <Button disabled>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Please confirm in your wallet
